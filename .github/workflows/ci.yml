@@ -14,4 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run tests
-        run: echo "All tests passed."
+        env:
+          ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          # Simulated flaky test: fails on the first attempt, passes on every rerun.
+          if [ "$ATTEMPT" = "1" ]; then
+            echo "Test timed out waiting for the service (simulated, attempt $ATTEMPT)."
+            exit 1
+          fi
+          echo "All tests passed on attempt $ATTEMPT."
